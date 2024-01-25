@@ -1,70 +1,71 @@
-// src/components/Login.js
-import React, { useState } from 'react';
-import axios from 'axios';
-import Swal from 'sweetalert2';
-import { useHistory } from 'react-router-dom';
+// src/pages/Login.js
+import React, { useState } from "react";
+import axios from "axios";
+import Swal from "sweetalert2";
+import { Link, useNavigate } from "react-router-dom";
 
-const Login = ({ onLogin }) => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const history = useHistory();
+const Login = ({ isAuthenticated, setIsAuthenticated }) => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const navigate = useNavigate();
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    if (name === 'email') {
-      setEmail(value);
-    } else if (name === 'password') {
-      setPassword(value);
-    }
-  };
+  // Verificar si el usuario ya está autenticado
+  if (isAuthenticated) {
+    // Redirigir al usuario a la página principal u otra ruta protegida
+    navigate("/");
+  }
 
-  const handleSubmit = async (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
 
     try {
-      const response = await axios.post(
-        process.env.REACT_APP_API_URL + '/api/login',
-        {
-          email,
-          password,
-        }
-      );
+      // Hacer la llamada a tu backend para verificar las credenciales
+      // const response = await axios.post(process.env.REACT_APP_API_URL + '/api/login', { email, password });
 
-      // Guardar el token en localStorage
-      localStorage.setItem('token', response.data.token);
+      // Placeholder: Simulación de inicio de sesión exitoso
+      const response = { data: { token: "exampleToken" } };
 
-      // Llamar a la función de login en el componente padre
-      onLogin();
+      // Guardar el token en el almacenamiento local o en el estado de la aplicación según tu implementación
+      // localStorage.setItem('token', response.data.token);
 
-      // Redirigir a la página principal
-      history.push('/');
+      // Actualizar el estado de autenticación en App.js
+      setIsAuthenticated(true);
+
+      // Mostrar alerta de éxito
+      Swal.fire({
+        icon: "success",
+        title: "Inicio de Sesión Exitoso",
+        text: "Bienvenido de nuevo.",
+      });
+
+      // Redirigir al usuario a la página principal (puede ser la página de tareas)
+      navigate("/");
     } catch (error) {
-      console.error('Error al iniciar sesión:', error);
+      console.error("Error al iniciar sesión:", error);
 
       // Mostrar alerta de error
       Swal.fire({
-        icon: 'error',
-        title: 'Error',
-        text: 'Credenciales incorrectas. Por favor, verifica tus datos.',
+        icon: "error",
+        title: "Error",
+        text: "Credenciales incorrectas. Por favor, verifica tus datos.",
       });
     }
   };
 
   return (
     <div className="container mt-5">
-      <h2>Login</h2>
-      <form onSubmit={handleSubmit}>
+      <h2>Iniciar Sesión</h2>
+      <form onSubmit={handleLogin}>
         <div className="mb-3">
           <label htmlFor="email" className="form-label">
-            Email
+            Correo Electrónico
           </label>
           <input
             type="email"
             className="form-control"
             id="email"
-            name="email"
             value={email}
-            onChange={handleInputChange}
+            onChange={(e) => setEmail(e.target.value)}
             required
           />
         </div>
@@ -76,9 +77,8 @@ const Login = ({ onLogin }) => {
             type="password"
             className="form-control"
             id="password"
-            name="password"
             value={password}
-            onChange={handleInputChange}
+            onChange={(e) => setPassword(e.target.value)}
             required
           />
         </div>
@@ -86,14 +86,11 @@ const Login = ({ onLogin }) => {
           Iniciar Sesión
         </button>
       </form>
-      <p className="mt-3">
-        ¿No tienes cuenta?{' '}
-        <button
-          className="btn btn-link"
-          onClick={() => history.push('/registro')}
-        >
-          Regístrate
-        </button>
+      <p className="mt-2">
+        ¿No tienes una cuenta?{" "}
+        <Link to="/registro" className="text-primary">
+          Regístrate aquí.
+        </Link>
       </p>
     </div>
   );
