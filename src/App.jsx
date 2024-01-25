@@ -1,32 +1,65 @@
 // src/App.js
-import React, { useState } from 'react';
-import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
-import SignUp from './pages/SignUp';
-import Login from './pages/Login';
-import TodoApp from './pages/TodoApp';
+import React, { useState, useEffect } from "react";
+import { Routes, Route, Navigate } from "react-router-dom";
+import TodoApp from "./pages/TodoApp";
+import Login from "./pages/Login";
+import SignUp from "./pages/SignUp";
+import LogoutButton from "./components/LogoutButton";
 
-function App() {
+const App = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
+  useEffect(() => {
+    // Verificar el token al cargar la aplicación
+    const token = localStorage.getItem("token");
+
+    if (token) {
+      // Placeholder: Verificación de token (puedes implementar una verificación real)
+      setIsAuthenticated(true);
+    }
+  }, []);
+
   return (
-    <Router>
+    <div>
+      {isAuthenticated && (
+        <div className="mb-3">
+          <LogoutButton setIsAuthenticated={setIsAuthenticated} />
+        </div>
+      )}
+
       <Routes>
         <Route
-          path="/signup"
-          element={<SignUp />}
+          path="/login"
+          element={
+            <Login
+              isAuthenticated={isAuthenticated}
+              setIsAuthenticated={setIsAuthenticated}
+            />
+          }
         />
         <Route
-          path="/login"
-          element={<Login setIsAuthenticated={setIsAuthenticated} />}
+          path="/signup"
+          element={
+            <SignUp
+              isAuthenticated={isAuthenticated}
+              setIsAuthenticated={setIsAuthenticated}
+            />
+          }
         />
-        {isAuthenticated ? (
-          <Route path="/" element={<TodoApp />} />
-        ) : (
-          <Route path="/" element={<Navigate to="/login" />} />
-        )}
+        <Route
+          path="/"
+          element={
+            isAuthenticated ? (
+              <TodoApp />
+            ) : (
+              // Redirigir a la página de inicio de sesión si no está autenticado
+              <Navigate to="/login" />
+            )
+          }
+        />
       </Routes>
-    </Router>
+    </div>
   );
-}
+};
 
 export default App;

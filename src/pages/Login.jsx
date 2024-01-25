@@ -1,5 +1,5 @@
 // src/pages/Login.js
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
 import { Link, useNavigate } from "react-router-dom";
@@ -8,6 +8,12 @@ const Login = ({ isAuthenticated, setIsAuthenticated }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate("/");
+    }
+  }, [isAuthenticated, navigate]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -21,11 +27,10 @@ const Login = ({ isAuthenticated, setIsAuthenticated }) => {
         }
       );
 
-      // Placeholder: Simulación de inicio de sesión exitoso
       const token = response.data.token;
 
-      // Guardar el token en el almacenamiento local o en el estado de la aplicación según tu implementación
-      // localStorage.setItem('token', token);
+      // Guardar el token en el localStorage
+      localStorage.setItem("token", token);
 
       // Actualizar el estado de autenticación en App.js
       setIsAuthenticated(true);
