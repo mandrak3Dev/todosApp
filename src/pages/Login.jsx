@@ -9,24 +9,23 @@ const Login = ({ isAuthenticated, setIsAuthenticated }) => {
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
-  // Verificar si el usuario ya está autenticado
-  if (isAuthenticated) {
-    // Redirigir al usuario a la página principal u otra ruta protegida
-    navigate("/");
-  }
-
   const handleLogin = async (e) => {
     e.preventDefault();
 
     try {
-      // Hacer la llamada a tu backend para verificar las credenciales
-      // const response = await axios.post(process.env.REACT_APP_API_URL + '/api/login', { email, password });
+      const response = await axios.post(
+        process.env.REACT_APP_AUTH_URL + "login",
+        {
+          email,
+          password,
+        }
+      );
 
       // Placeholder: Simulación de inicio de sesión exitoso
-      const response = { data: { token: "exampleToken" } };
+      const token = response.data.token;
 
       // Guardar el token en el almacenamiento local o en el estado de la aplicación según tu implementación
-      // localStorage.setItem('token', response.data.token);
+      // localStorage.setItem('token', token);
 
       // Actualizar el estado de autenticación en App.js
       setIsAuthenticated(true);
@@ -88,7 +87,7 @@ const Login = ({ isAuthenticated, setIsAuthenticated }) => {
       </form>
       <p className="mt-2">
         ¿No tienes una cuenta?{" "}
-        <Link to="/registro" className="text-primary">
+        <Link to="/signup" className="text-primary">
           Regístrate aquí.
         </Link>
       </p>
